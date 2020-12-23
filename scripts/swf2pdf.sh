@@ -35,7 +35,6 @@ while true; do
             outfile=$1; shift ;;
       -t) converter=gfx2gfx-text
             shift ;;
-      # ... Other options ...
       -*) usage
           exit 2;;
       *) break ;;
@@ -49,7 +48,6 @@ last_var=""
 for var in "$@"; do
     # remove arguments to leave only the list of files
     if [ "$var" = '-t' ] || [ "$var" = '-o' ] || [ "$last_var" = '-o' ] || [ "$var" = '-r' ] || [ "$last_var" = '-r' ]; then
-      echo $var
         last_var=$var
         continue
     fi
@@ -82,19 +80,16 @@ do
   filenum=$((filenum+1))
   ctr=$((ctr+1))
   if [[ "$ctr" -eq 1 ]]; then
-    #echo "New .swf $f to $com_swf"
     echo -ne "Page $filenum merge $f into $com_swf\r"
     cp $f $com_swf
     arr_swf_merge+=($com_swf)
   elif [[ "$ctr" -eq maxperrun ]]; then
-    #echo "$ctr merge $f to $com_swf"
     echo -ne "Page $filenum merge $f into $com_swf\r"
     swfcombine --cat $com_swf $f  -o $com_swf
     part=$((part+1))
     ctr=0
     com_swf="combined_$now-$part.swf"
   else
-    #echo "$ctr merge $f to $com_swf"
     echo -ne "Page $filenum merge $f into $com_swf\r"
     swfcombine --cat $com_swf $f  -o $com_swf
   fi
@@ -118,19 +113,16 @@ do
   ctr=$((ctr+1))
   filenum=$((filenum+1))
   if [[ "$ctr" -eq 1 ]]; then
-    #echo "New .swf $f to $com_swf"
     echo -ne "$filenum merge $f into $com_swf\r"
     cp $f $com_swf
     arr_pdf_merge+=($com_swf)
   elif [[ "$ctr" -eq swf_merges ]]; then
-    #echo "$ctr merge $f to $com_swf"
     echo -ne "$filenum merge $f into $com_swf\r"
     swfcombine --cat $com_swf $f  -o $com_swf
     part=$((part+1))
     ctr=0
     com_swf="combined_$now-M-$part.swf"
   else
-    #echo "$ctr merge $f to $com_swf"
     echo -ne "$filenum merge $f into $com_swf\r"
     swfcombine --cat $com_swf $f  -o $com_swf
   fi

@@ -1,14 +1,14 @@
 # Dockerimage with SWFTOOLS to convert flash swf files to pdf using gfx2gfx
-# cd docker-swftools
-# docker build -t st-gr/swf2pdf .
+# cd docker-swf2pdf
+# docker build -t st0gr/swf2pdf:latest .
 #
 # Usage:
 # ======
 # to create a print version of the swf to pdf use
-# docker run --rm -it -v ~/Documents/myswfs:/home/swf/work stgr/swf2pdf ./swf2pdf.sh work/myswfs/page0*.swf
+# docker run --rm -it -v ~/Documents/myswfs:/home/swf/work st0gr/swf2pdf ./swf2pdf.sh work/myswfs/page0*.swf
 #
 # to create a text version of the swf to pdf use (less accurate, but searchable)
-# docker run --rm -it -v ~/Documents/myswfs:/home/swf/work stgr/swf2pdf ./swf2pdf.sh -t work/myswfs/page0*.swf
+# docker run --rm -it -v ~/Documents/myswfs:/home/swf/work st0gr/swf2pdf ./swf2pdf.sh -t work/myswfs/page0*.swf
 
 FROM debian:buster AS swf-builder
 
@@ -41,7 +41,6 @@ RUN set -ex && \
         libgif-dev \
         libfreetype6-dev \
         libfontconfig-dev \
-        #libfontconfig1-dev
         libfftw3-dev \
         libzzip-dev \
         libpoppler-dev \
@@ -182,17 +181,6 @@ ARG binPath=/usr/local/bin
 # Copy complete tarball of all binaries from build image
 COPY --from=swf-builder ${buildPath}/complete.tar.gz ${buildPath}/complete.tar.gz
 
-## Copy compiled libraries
-#COPY --from=swf-builder ${libPath}/pdflib.tar.gz ${libPath}/pdflib.tar.gz
-
-## Copy compiled local binaries
-#COPY --from=swf-builder ${binPath}/swftools-local-bin.tar.gz ${binPath}/swftools-local-bin.tar.gz
-
-## Copy compiled binaries set glyph version of gfx2gfx into bin
-## Copy text version of gfx2gfx into bin gfx2gfx-text
-#COPY --from=swf-builder ${buildPath}/swftools-bin.tar.gz ${binPath}/swftools-bin.tar.gz
-
-# copy the fonts for later use
 # TODO: Mount host fonts read only
 COPY fonts/ /usr/local/share/fonts
 
@@ -222,10 +210,8 @@ RUN set -ex && \
         libgif7 \
         libfreetype6 \
         libfontconfig1 \
-        #libfontconfig1-dev
         libfftw3-3 \
         libzzip-0-13 \
-        #libpoppler-dev \
         # for TTF fonts call fc-cache -f -v to renew fonts cache for fonts in /usr/local/share/fonts
         fontconfig \
         bc && \

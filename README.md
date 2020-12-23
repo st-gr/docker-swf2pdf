@@ -32,8 +32,8 @@ Steps to download and build:
 2. change the directory to the folder where you cloned the repo to, e. g.
    >`cd docker-swf2pdf`
 3. Start the build
-   >`docker build -t st-gr/swf2pdf .`
-4. Wait.  If everything goes well you have a new docker image with the tagname you chose, e. g. st-gr/swf2pdf, validate with:
+   >`docker build -t st0gr/swf2pdf .`
+4. Wait.  If everything goes well you have a new docker image with the tagname you chose, e. g. st0gr/swf2pdf, validate with:
    > `docker image list`
 
 You will find an additional docker image named `<none>` and the size of about 1.25 GB.  It is the build image of the multistage build.  You can delete it by using its ID which you retrieved from the previously executed `docker image list` command, e. g.
@@ -44,10 +44,10 @@ The build might fail if the source packages mentioned above were changed as I pa
 ## How to use
 For the examples below our local folder with the SWF files is in the user profile under `Documents/myswfs`.
 
-The folder contains Adobe flash files named `page0001.swf` to `page 0nnn.swf`.
+The folder contains Adobe flash files named `page0001.swf` to `page0nnn.swf`.
 
 ### Create a PDF print version of the SWF files use
->`docker run --rm -it -v ~/Documents/myswfs:/home/swf/work st-gr/swf2pdf ./swf2pdf.sh work/myswfs/page0*.swf`
+>`docker run --rm -it -v ~/Documents/myswfs:/home/swf/work st0gr/swf2pdf ./swf2pdf.sh work/myswfs/page0*.swf`
 
 This docker command will run the script `swf2pdf.sh` and map the volume path to `/home/swf/work` in the docker container.  The container will be removed (`--rm`) after the container completed the execution.
 
@@ -55,9 +55,11 @@ This docker command will run the script `swf2pdf.sh` and map the volume path to 
 We are going to pass the `-t` option for text output to the script.
 We are also using the `-r` option to change the dpi to 300 from the default 200 dpi and finally we are going to change the output filename with the `-o` option.
 
->`docker run --rm -it -v ~/Documents/myswfs:/home/swf/work st-gr/swf2pdf ./swf2pdf.sh -t -r 300 -o pdftext.pdf work/myswfs/page0*.swf`
+>`docker run --rm -it -v ~/Documents/myswfs:/home/swf/work st0gr/swf2pdf ./swf2pdf.sh -t -r 300 -o pdftext.pdf work/myswfs/page0*.swf`
 
 The generated PDF contains searchable text at the cost of precision.  The PDF file will be smaller compared to the print version.
+
+You can create an alias or shell if you are using this more often.
 
 ### Output
 The single SWF files will be merged into one PDF named after the folder.  In our example `myswfs.pdf` inside the same folder as the single SWF files.
@@ -70,3 +72,5 @@ Also some layer optimization should take place to reduce the size of the runtime
 The local fonts folder should be mounted read-only and the font cache in the container updated before the script starts.  However, depending on how many fonts you have this could take a while.
 
 Replace the inline BASE64 file with a working dockerfile embedded version.
+
+The build time and image size could be reduced by merging the three SWFTOOLS codebases into one and while you are at it remove the PDFLib-Light dependency.
